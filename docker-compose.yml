@@ -5,7 +5,7 @@ version: '3'
 services:
 
   mosquitto:
-    image: eclipse-mosquitto:${MOSQUITTO_VERSION}
+    image: docker.io/eclipse-mosquitto:${MOSQUITTO_VERSION}
     # https://github.com/eclipse/mosquitto/issues/2040#issuecomment-792349744
     command: mosquitto -c /mosquitto-no-auth.conf
     restart: unless-stopped
@@ -18,7 +18,7 @@ services:
 
   # https://github.com/robcowart/docker_compose_cookbook/blob/master/STACKS/influx_oss/docker-compose.yml#L21
   influxdb:
-    image: influxdb:${INFLUXDB_VERSION}
+    image: docker.io/influxdb:${INFLUXDB_VERSION}
     restart: unless-stopped
     ports:
       - ${INFLUXDB_HTTP_PORT}:8086
@@ -34,17 +34,17 @@ services:
       INFLUXDB_REPORTING_DISABLED: 'true'
 
   mongodb:
-    image: mongo:${MONGODB_VERSION}
+    image: docker.io/mongo:${MONGODB_VERSION}
     restart: unless-stopped
     ports:
       - ${MONGODB_PORT}:27017
     volumes:
-      - ${PATH_VAR_LIB}/mongodb:/data/db
-      - ${PATH_VAR_LOG}/mongodb:/var/log/mongodb
+      - kotori_mongodb_1_data:/data/db
+      - kotori_mongodb_1_logs:/var/log/mongodb
 
   # https://community.grafana.com/t/influxdb-datasource-in-docker-network-what-url/28732
   grafana:
-    image: grafana/grafana:${GRAFANA_VERSION}
+    image: docker.io/grafana/grafana:${GRAFANA_VERSION}
     # https://community.grafana.com/t/new-docker-install-with-persistent-storage-permission-problem/10896/15
     user: "${UID}:${GID}"
     restart: unless-stopped
@@ -61,3 +61,9 @@ services:
       GF_SECURITY_DISABLE_GRAVATAR: 'true'
     depends_on:
       - influxdb
+
+volumes:
+  kotori_mongodb_1_data:
+  kotori_mongodb_1_logs:
+  
+
