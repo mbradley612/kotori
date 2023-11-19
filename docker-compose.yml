@@ -24,7 +24,7 @@ services:
       - ${INFLUXDB_HTTP_PORT}:8086
       - ${INFLUXDB_RPC_PORT}:8088
     volumes:
-      - ${PATH_VAR_LIB}/influxdb:/var/lib/influxdb
+      - influxdb_1_data:/var/lib/influxdb
     environment:
       INFLUXDB_HTTP_AUTH_ENABLED: 'false'
       INFLUXDB_ADMIN_USER: root
@@ -39,8 +39,8 @@ services:
     ports:
       - ${MONGODB_PORT}:27017
     volumes:
-      - kotori_mongodb_1_data:/data/db
-      - kotori_mongodb_1_logs:/var/log/mongodb
+      - mongodb_1_data:/data/db
+      - mongodb_1_logs:/var/log/mongodb
 
   # https://community.grafana.com/t/influxdb-datasource-in-docker-network-what-url/28732
   grafana:
@@ -51,8 +51,8 @@ services:
     ports:
       - ${GRAFANA_PORT}:3000
     volumes:
-      - ${PATH_VAR_LIB}/grafana:/var/lib/grafana
-      - ${PATH_VAR_LOG}/grafana:/var/log/grafana
+      - grafana_1_data:/var/lib/grafana
+      - grafana_1_logs:/var/log/grafana
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
@@ -62,8 +62,25 @@ services:
     depends_on:
       - influxdb
 
+  kotori:
+    image: docker.io/daqzilla/kotori-standard
+    ports: 
+      - ${KOTORI_PORT}:24642
+    volumes:
+      - ${PATH_ETC}:/etc/kotori
+    environment:
+      KOTORI_CONFIG: /etc/kotori/docker/docker-influxdb.ini
+    depends_on:
+      - mosquitto
+      - grafana
+      - mongodb
+
+
 volumes:
-  kotori_mongodb_1_data:
-  kotori_mongodb_1_logs:
+  mongodb_1_data:
+  mongodb_1_logs:
+  grafana_1_data:
+  grafana_1_logs:
+  influxdb_1_data:
   
 
