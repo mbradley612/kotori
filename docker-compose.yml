@@ -7,7 +7,8 @@ services:
   mosquitto:
     image: docker.io/eclipse-mosquitto:${MOSQUITTO_VERSION}
     # https://github.com/eclipse/mosquitto/issues/2040#issuecomment-792349744
-    command: mosquitto -c /mosquitto-no-auth.conf
+    # command: mosquitto -c /etc/mosquitto-timbley.conf
+    # command: mosquitto -c /mosquitto-no-auth.conf
     restart: unless-stopped
     ports:
       - ${MOSQUITTO_MQTT_PORT}:1883
@@ -15,6 +16,8 @@ services:
     volumes:
       - ${PATH_VAR_LIB}/mosquitto:/mosquitto/data
       - ${PATH_VAR_LOG}/mosquitto:/mosquitto/log
+      - ${MOSQUITTO_CONF}:/mosquitto/config/mosquitto.conf
+
 
   # https://github.com/robcowart/docker_compose_cookbook/blob/master/STACKS/influx_oss/docker-compose.yml#L21
   influxdb:
